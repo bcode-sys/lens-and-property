@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>File Diagnostic</title>
+<style>
+body{background:#0a0a0a;color:#f5f5f0;font-family:monospace;padding:40px;}
+h2{color:#c9a96e;margin-bottom:20px;}
+.ok{color:#4caf50;} .fail{color:#f44336;}
+table{border-collapse:collapse;width:100%;max-width:700px;}
+td,th{padding:10px 16px;border:1px solid #2a2a2a;text-align:left;font-size:13px;}
+th{background:#1a1a1a;color:#c9a96e;}
+</style>
+</head>
+<body>
+<h2>Lens & Property — File Diagnostic</h2>
+<p style="color:#8a8a8a;margin-bottom:32px;">This page checks whether your video and image files are accessible on the server. Green = found. Red = missing or too large.</p>
+<table>
+<tr><th>File</th><th>Type</th><th>Status</th></tr>
+</table>
+<script>
+const files = [
+  {path:"videos/hero.mp4", type:"Video"},
+  {path:"videos/listing1.mp4", type:"Video"},
+  {path:"videos/listing2.mp4", type:"Video"},
+  {path:"videos/listing3.mp4", type:"Video"},
+  {path:"videos/listing4.mp4", type:"Video"},
+  {path:"videos/listing5.mp4", type:"Video"},
+  {path:"images/villa-living-before.jpeg", type:"Image"},
+  {path:"images/villa-living-after.jpeg", type:"Image"},
+  {path:"images/penthouse-open-before.jpeg", type:"Image"},
+  {path:"images/penthouse-open-after.jpeg", type:"Image"},
+  {path:"images/condo-bedroom-before.jpeg", type:"Image"},
+  {path:"images/condo-bedroom-after.jpeg", type:"Image"},
+  {path:"images/suburban-kitchen-before.jpeg", type:"Image"},
+  {path:"images/suburban-kitchen-after.jpeg", type:"Image"},
+  {path:"images/studio-open-before.jpeg", type:"Image"},
+  {path:"images/studio-open-after.jpeg", type:"Image"},
+];
+
+const tbody = document.querySelector("table");
+
+files.forEach(f => {
+  const row = document.createElement("tr");
+  const statusCell = document.createElement("td");
+  statusCell.textContent = "Checking...";
+  statusCell.style.color = "#8a8a8a";
+  row.innerHTML = `<td>${f.path}</td><td>${f.type}</td>`;
+  row.appendChild(statusCell);
+  tbody.appendChild(row);
+
+  fetch(f.path, {method:"HEAD"})
+    .then(r => {
+      const size = r.headers.get("content-length");
+      const mb = size ? (parseInt(size)/1048576).toFixed(1)+"MB" : "unknown size";
+      if(r.ok){
+        statusCell.innerHTML = `<span class="ok">✓ Found (${mb})</span>`;
+      } else {
+        statusCell.innerHTML = `<span class="fail">✗ ${r.status} Not Found</span>`;
+      }
+    })
+    .catch(() => {
+      statusCell.innerHTML = `<span class="fail">✗ Cannot reach file</span>`;
+    });
+});
+</script>
+</body>
+</html>

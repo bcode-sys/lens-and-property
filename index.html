@@ -1,0 +1,1832 @@
+<!DOCTYPE html>
+<!--
+╔════════════════════════════════════════════════════════════════════╗
+║  VIDEO FILE LOCATIONS — QUICK REFERENCE                             ║
+║                                                                      ║
+║  All videos load from a "videos" folder placed NEXT TO this HTML    ║
+║  file (same folder, not nested). Expected structure:                ║
+║                                                                      ║
+║    your-portfolio/                                                  ║
+║    ├── index.html        (this file)                                ║
+║    └── videos/                                                      ║
+║        ├── hero.mp4      → MAIN BACKGROUND VIDEO (search "MAIN      ║
+║        │                    BACKGROUND VIDEO" below to find it)     ║
+║        ├── listing1.mp4  → Grid Card 1 · Luxury Florida Villa (Featured) ║
+║        ├── listing2.mp4  → Grid Card 2 · High-Rise Penthouse        ║
+║        ├── listing3.mp4  → Grid Card 3 · Modern Condo               ║
+║        ├── listing4.mp4  → Grid Card 4 · Suburban Family Home       ║
+║        └── listing5.mp4  → Grid Card 5 · Studio Apartment           ║
+║                                                                      ║
+║  Use MP4 (H.264 codec), keep each file under 25MB for Netlify.      ║
+╚════════════════════════════════════════════════════════════════════╝
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lens & Property — Cinematic Real Estate Tours</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black:    #0A0A0A;
+    --deep:     #111111;
+    --panel:    #1A1A1A;
+    --border:   #2A2A2A;
+    --gold:     #C9A96E;
+    --gold-dim: #8A6D42;
+    --white:    #F5F5F0;
+    --muted:    #8A8A8A;
+    --glass:    rgba(255,255,255,0.035);
+    --glass-b:  rgba(255,255,255,0.06);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: -apple-system, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 48px;
+    height: 64px;
+    background: rgba(10,10,10,0.72);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .nav-logo {
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--white);
+    text-transform: uppercase;
+  }
+
+  .nav-logo span { color: var(--gold); }
+
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--white); }
+
+  .nav-cta {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--black);
+    background: var(--gold);
+    padding: 8px 20px;
+    border-radius: 20px;
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    transition: opacity 0.2s;
+  }
+
+  .nav-cta:hover { opacity: 0.85; }
+  /* ── NAV RIGHT CLUSTER ── */
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  /* Language selector */
+  .lang-wrap { position: relative; }
+  .lang-btn {
+    display: flex; align-items: center; gap: 6px;
+    background: transparent; border: 1px solid var(--border);
+    color: var(--muted); font-size: 12px; font-weight: 500;
+    letter-spacing: 0.04em; padding: 6px 12px; border-radius: 20px;
+    cursor: pointer; font-family: inherit; transition: all 0.2s;
+  }
+  .lang-btn:hover { border-color: rgba(255,255,255,0.25); color: var(--white); }
+  .lang-current { font-size: 11px; font-weight: 600; }
+  .lang-menu {
+    display: none; position: absolute; top: calc(100% + 8px); right: 0;
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 10px; overflow: hidden; min-width: 140px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5); z-index: 200;
+  }
+  .lang-menu.open { display: block; }
+  .lang-opt {
+    display: block; width: 100%; text-align: left;
+    background: transparent; border: none; color: var(--muted);
+    font-size: 13px; font-weight: 400; padding: 10px 16px;
+    cursor: pointer; font-family: inherit; transition: background 0.15s, color 0.15s;
+  }
+  .lang-opt:hover { background: var(--border); color: var(--white); }
+  .lang-opt.active { color: var(--gold); }
+
+  /* Hamburger — hidden on desktop */
+  .hamburger {
+    display: none; flex-direction: column; justify-content: center;
+    align-items: center; gap: 5px; width: 38px; height: 38px;
+    background: transparent; border: 1px solid var(--border);
+    border-radius: 8px; cursor: pointer; padding: 0;
+  }
+  .hamburger span {
+    display: block; width: 18px; height: 1.5px;
+    background: var(--white); border-radius: 2px;
+    transition: transform 0.3s, opacity 0.3s;
+  }
+  .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+  /* Mobile drawer */
+  .mobile-menu {
+    display: none; position: fixed; top: 56px; left: 0; right: 0;
+    background: rgba(10,10,10,0.97); backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    z-index: 99; padding: 24px 24px 32px;
+    transform: translateY(-10px); opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+  .mobile-menu.open {
+    display: block; transform: translateY(0); opacity: 1;
+  }
+  .mobile-menu ul { list-style: none; display: flex; flex-direction: column; gap: 0; }
+  .mobile-menu ul li a {
+    display: block; padding: 14px 0;
+    font-size: 18px; font-weight: 300; color: var(--white);
+    text-decoration: none; letter-spacing: 0.02em;
+    border-bottom: 1px solid var(--border);
+    transition: color 0.2s;
+  }
+  .mobile-menu ul li a:hover { color: var(--gold); }
+  .mob-lang { padding-top: 20px; }
+  .mob-lang-btn {
+    background: var(--panel); border: 1px solid var(--border);
+    color: var(--muted); font-size: 12px; font-weight: 500;
+    padding: 7px 14px; border-radius: 20px; cursor: pointer;
+    font-family: inherit; transition: all 0.2s;
+  }
+  .mob-lang-btn:hover, .mob-lang-btn.active { background: var(--gold); color: var(--black); border-color: var(--gold); }
+  .mobile-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.4); z-index: 98;
+  }
+  .mobile-overlay.open { display: block; }
+
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    height: 100vh;
+    min-height: 680px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    /* Push content down so it never overlaps the 64px fixed nav */
+    padding-top: 64px;
+  }
+
+  .hero-video {
+    position: absolute;
+    inset: 0;
+    z-index: 1; /* sits above the fallback gradient (z-index 0) */
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.45) saturate(1.1);
+  }
+
+  /* Fallback gradient behind video */
+  .hero-bg-fallback {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #0d0d0d 0%, #1a1208 50%, #0a0a0a 100%);
+  }
+
+  /* Subtle vignette */
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.6) 100%);
+    pointer-events: none;
+  }
+
+  /* Bottom fade into next section */
+  .hero::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 200px;
+    background: linear-gradient(to bottom, transparent, var(--black));
+    z-index: 2;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 3;
+    text-align: center;
+    padding: 0 24px;
+    max-width: 820px;
+    width: 100%;
+    /* margin-bottom reserves space between buttons and the scroll hint zone */
+    margin-bottom: 72px;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 28px;
+  }
+
+  .hero-eyebrow::before,
+  .hero-eyebrow::after {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 1px;
+    background: var(--gold-dim);
+  }
+
+  .hero-headline {
+    margin-bottom: 24px;
+    line-height: 1;
+  }
+
+  .hero-line1 {
+    display: block;
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    color: var(--white);
+    line-height: 1.15;
+    margin-bottom: 8px;
+  }
+
+  .hero-line2 {
+    display: block;
+    font-size: clamp(48px, 9vw, 100px);
+    font-weight: 300;
+    letter-spacing: -0.035em;
+    color: var(--gold);
+    line-height: 1.0;
+  }
+
+  .hero-headline em {
+    font-style: normal;
+    color: var(--gold);
+  }
+
+  .hero-sub {
+    font-size: clamp(14px, 1.6vw, 17px);
+    font-weight: 300;
+    color: rgba(245,245,240,0.6);
+    line-height: 1.7;
+    letter-spacing: 0.01em;
+    margin-top: 28px;
+    margin-bottom: 40px;
+    max-width: 540px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--black);
+    background: var(--gold);
+    padding: 14px 28px;
+    border-radius: 30px;
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    transition: transform 0.2s, opacity 0.2s;
+  }
+
+  .btn-primary:hover { transform: scale(1.03); opacity: 0.9; }
+
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 400;
+    color: rgba(245,245,240,0.75);
+    padding: 14px 28px;
+    border-radius: 30px;
+    border: 1px solid rgba(255,255,255,0.15);
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    transition: border-color 0.2s, color 0.2s;
+    backdrop-filter: blur(10px);
+  }
+
+  .btn-ghost:hover { border-color: rgba(255,255,255,0.35); color: var(--white); }
+
+  /* Scroll indicator — pinned to hero bottom, NEVER touches buttons
+     because it is absolutely positioned within .hero and hero-content
+     has margin-bottom:72px pushing buttons well above this zone */
+  .scroll-hint {
+    position: absolute;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    opacity: 0.35;
+    animation: fadeHint 3s 2s ease-in-out infinite;
+    pointer-events: none;
+    transition: opacity 0.4s;
+  }
+
+  .scroll-hint span {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--white);
+  }
+
+  .scroll-line {
+    width: 1px;
+    height: 36px;
+    background: linear-gradient(to bottom, var(--white), transparent);
+    animation: scrollDrop 1.8s 2s ease-in-out infinite;
+  }
+
+  @keyframes scrollDrop {
+    0%, 100% { transform: scaleY(1); transform-origin: top; }
+    50% { transform: scaleY(0.4); transform-origin: top; }
+  }
+
+  @keyframes fadeHint {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.7; }
+  }
+
+  /* ── STATS STRIP ── */
+  .stats {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: var(--deep);
+  }
+
+  .stat-item {
+    flex: 1;
+    max-width: 220px;
+    padding: 36px 24px;
+    text-align: center;
+    border-right: 1px solid var(--border);
+  }
+
+  .stat-item:last-child { border-right: none; }
+
+  .stat-number {
+    font-size: 36px;
+    font-weight: 200;
+    letter-spacing: -0.03em;
+    color: var(--white);
+    line-height: 1;
+  }
+
+  .stat-number sup {
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--gold);
+    vertical-align: super;
+    margin-left: 2px;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 8px;
+  }
+
+  /* ── SECTION SHELL ── */
+  section {
+    padding: 100px 48px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+
+  .section-eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-size: clamp(32px, 5vw, 54px);
+    font-weight: 300;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+    color: var(--white);
+    margin-bottom: 16px;
+  }
+
+  .section-sub {
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 520px;
+  }
+
+  /* ── WORK GRID ── */
+  .work-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 48px;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 2px;
+  }
+
+  .grid-item {
+    position: relative;
+    overflow: hidden;
+    background: var(--panel);
+    cursor: pointer;
+  }
+
+  /* 5-card editorial layout:
+     Card 1 (Luxury Villa): featured, spans 8 of 12 cols × 2 rows
+     Cards 2-3 (Penthouse, Condo): 4 cols each, right column
+     Cards 4-5 (Suburban, Studio): 6 cols each, full bottom row */
+  .grid-item:nth-child(1) { grid-column: span 8; grid-row: span 2; aspect-ratio: 16/10; }
+  .grid-item:nth-child(2) { grid-column: span 4; aspect-ratio: 4/3; }
+  .grid-item:nth-child(3) { grid-column: span 4; aspect-ratio: 4/3; }
+  .grid-item:nth-child(4) { grid-column: span 6; aspect-ratio: 16/9; }
+  .grid-item:nth-child(5) { grid-column: span 6; aspect-ratio: 16/9; }
+
+  .grid-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), filter 0.4s;
+    filter: brightness(0.75) saturate(0.9);
+  }
+
+  /* Video thumbnail placeholder with cinematic gradient */
+  .grid-thumb-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    inset: 0;
+  }
+
+  .grid-item:nth-child(1) .grid-thumb-placeholder {
+    background: linear-gradient(135deg, #1a1208 0%, #2d1f0a 40%, #0d0d0d 100%);
+  }
+  .grid-item:nth-child(2) .grid-thumb-placeholder {
+    background: linear-gradient(135deg, #0d1a1a 0%, #0a1208 100%);
+  }
+  .grid-item:nth-child(3) .grid-thumb-placeholder {
+    background: linear-gradient(135deg, #1a0d0d 0%, #2a1a0a 100%);
+  }
+  .grid-item:nth-child(4) .grid-thumb-placeholder {
+    background: linear-gradient(135deg, #0a0a1a 0%, #1a0d1a 100%);
+  }
+  .grid-item:nth-child(5) .grid-thumb-placeholder {
+    background: linear-gradient(135deg, #0d1a0d 0%, #1a1208 100%);
+  }
+  .grid-item:nth-child(6) .grid-thumb-placeholder {
+    background: linear-gradient(135deg, #1a1a0d 0%, #0d0d1a 100%);
+  }
+
+  .play-ring {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(201,169,110,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+
+  .play-ring svg {
+    width: 18px;
+    height: 18px;
+    fill: rgba(201,169,110,0.8);
+    margin-left: 3px;
+    transition: fill 0.3s;
+  }
+
+  .grid-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.2) 45%, transparent 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 24px;
+    opacity: 1;  /* always visible on all cards */
+    transition: opacity 0.35s;
+  }
+  .grid-item:hover .grid-thumb { transform: scale(1.04); filter: brightness(0.55) saturate(1.1); }
+  .grid-item:hover .play-ring { transform: scale(1.12); border-color: var(--gold); }
+  .grid-item:hover .play-ring svg { fill: var(--gold); }
+
+  .overlay-tag {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+
+  .overlay-title {
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--white);
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+
+  .grid-item:nth-child(1) .overlay-title { font-size: 26px; font-weight: 300; }
+
+  .overlay-meta {
+    font-size: 12px;
+    color: rgba(245,245,240,0.5);
+    margin-top: 4px;
+  }
+
+  /* ── HOW IT WORKS ── */
+  .process-section {
+    border-top: 1px solid var(--border);
+    padding-top: 100px;
+    padding-bottom: 100px;
+  }
+
+  .process-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    margin-top: 60px;
+    border: 1px solid var(--border);
+  }
+
+  .process-card {
+    background: var(--deep);
+    padding: 48px 36px;
+    position: relative;
+  }
+
+  .process-index {
+    font-size: 60px;
+    font-weight: 100;
+    letter-spacing: -0.04em;
+    color: rgba(201,169,110,0.15);
+    line-height: 1;
+    margin-bottom: 28px;
+  }
+
+  .process-name {
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--white);
+    letter-spacing: -0.01em;
+    margin-bottom: 12px;
+  }
+
+  .process-desc {
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  .process-accent {
+    position: absolute;
+    top: 0; left: 0;
+    width: 2px;
+    height: 48px;
+    background: var(--gold);
+  }
+
+  /* ── TESTIMONIAL ── */
+  .testimonial-section {
+    border-top: 1px solid var(--border);
+    background: var(--deep);
+    padding: 100px 48px;
+    text-align: center;
+  }
+
+  .testimonial-section blockquote {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .quote-mark {
+    font-size: 80px;
+    font-weight: 100;
+    color: var(--gold);
+    line-height: 0.6;
+    margin-bottom: 32px;
+    display: block;
+    opacity: 0.4;
+  }
+
+  .quote-text {
+    font-size: clamp(20px, 3vw, 30px);
+    font-weight: 300;
+    color: var(--white);
+    line-height: 1.45;
+    letter-spacing: -0.01em;
+    margin-bottom: 36px;
+  }
+
+  .quote-author {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .quote-author span {
+    color: var(--gold);
+    margin-right: 10px;
+  }
+
+  /* ── CTA SECTION ── */
+  .cta-section {
+    text-align: center;
+    padding: 120px 48px;
+    border-top: 1px solid var(--border);
+    max-width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-section::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(201,169,110,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .cta-section .section-title {
+    max-width: 600px;
+    margin: 0 auto 20px;
+  }
+
+  .cta-section .section-sub {
+    max-width: 440px;
+    margin: 0 auto 48px;
+  }
+
+  .cta-email {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 28px;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .cta-email:hover { color: var(--gold); }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 36px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--deep);
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .footer-logo {
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--white);
+    text-transform: uppercase;
+  }
+
+  .footer-logo span { color: var(--gold); }
+
+  .footer-copy {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 24px;
+    list-style: none;
+  }
+
+  .footer-links a {
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--white); }
+
+  /* ── RESPONSIVE ── */
+
+  /* ── TABLET 900px ── */
+  @media (max-width: 900px) {
+    /* Nav */
+    nav { padding: 0 20px; gap: 12px; }
+    .nav-links { display: none; }
+    .nav-cta { display: none; }  /* hidden on tablet/mobile — use hamburger */
+    .hamburger { display: flex; }
+
+    /* Hero */
+    .hero { min-height: 100svh; padding-top: 64px; }
+    .hero-content { padding: 0 20px 100px; } /* extra bottom clears scroll hint */
+    .hero-line1 { font-size: clamp(26px, 5.5vw, 44px); }
+    .hero-line2 { font-size: clamp(38px, 8.5vw, 72px); }
+    .hero-sub { font-size: 15px; max-width: 480px; }
+    .hero-actions { gap: 12px; }
+
+    /* Hero content — less margin on mobile */
+    .hero-content { margin-bottom: 48px; }
+    .scroll-hint { bottom: 14px; }
+
+
+    /* Sections */
+    section { padding: 64px 20px; }
+
+    /* Stats */
+    .stats { flex-wrap: wrap; justify-content: flex-start; }
+    .stat-item {
+      flex: 1 1 calc(50% - 1px);
+      min-width: 120px;
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+    }
+    .stat-item:nth-child(odd) { border-right: 1px solid var(--border); }
+
+    /* Work grid */
+    #grid-wrap { padding: 0 20px; margin-bottom: 64px; }
+    .grid-item:nth-child(1) { grid-column: span 12; aspect-ratio: 16/9; }
+    .grid-item:nth-child(2),
+    .grid-item:nth-child(3) { grid-column: span 6; aspect-ratio: 4/3; }
+    .grid-item:nth-child(4),
+    .grid-item:nth-child(5) { grid-column: span 6; aspect-ratio: 16/9; }
+
+    /* Process */
+    .process-grid { grid-template-columns: 1fr 1fr; }
+
+    /* Testimonial */
+    .testimonial-section { padding: 64px 20px; }
+    .quote-text { font-size: clamp(18px, 3.5vw, 26px); }
+
+    /* Pricing — stack to 1 col */
+    #packages > div > div[style*="grid-template-columns:repeat(3"] {
+      grid-template-columns: 1fr !important;
+    }
+
+    /* Virtual staging — stack to 1 col */
+    #staging > div > div[style*="grid-template-columns:1fr 1fr"] {
+      grid-template-columns: 1fr !important;
+      gap: 40px !important;
+    }
+
+    /* CTA / Footer */
+    .cta-section { padding: 72px 20px; }
+    footer { flex-direction: column; text-align: center; align-items: center; padding: 28px 20px; }
+    .footer-links { flex-wrap: wrap; justify-content: center; gap: 16px; }
+  }
+
+  /* ── MOBILE 540px ── */
+  @media (max-width: 540px) {
+    /* Nav */
+    nav { padding: 0 16px; height: 56px; }
+    .nav-logo { font-size: 13px; }
+    .nav-cta { display: none; }  /* hidden on mobile */
+    .hamburger { display: flex; }
+    .lang-btn { padding: 5px 10px; font-size: 11px; }
+
+    /* Hero */
+    .hero { padding-top: 56px; min-height: 100svh; }
+    .hero-content { padding: 0 16px; margin-bottom: 60px; }
+
+    .hero-eyebrow { font-size: 10px; margin-bottom: 20px; }
+    .hero-line1 { font-size: clamp(22px, 7vw, 34px); margin-bottom: 6px; }
+    .hero-line2 { font-size: clamp(32px, 10.5vw, 54px); }
+    .hero-sub { font-size: 14px; line-height: 1.65; margin-top: 20px; margin-bottom: 32px; }
+    .hero-actions { flex-direction: column; align-items: center; gap: 10px; width: 100%; }
+    .btn-primary,
+    .btn-ghost { width: 100%; max-width: 300px; justify-content: center; }
+
+    /* Scroll hint — tucked to very bottom, never touches buttons */
+    .scroll-hint { bottom: 12px; }
+
+    /* Sections */
+    section { padding: 56px 16px; }
+
+    /* Stats — 2×2 grid */
+    .stat-item { flex: 1 1 50%; border-right: none; border-bottom: 1px solid var(--border); }
+    .stat-item:nth-child(odd) { border-right: 1px solid var(--border); }
+    .stat-number { font-size: 28px; }
+
+    /* Work grid — single column */
+    #grid-wrap { padding: 0 16px; margin-bottom: 56px; }
+    .grid-item:nth-child(1),
+    .grid-item:nth-child(2),
+    .grid-item:nth-child(3),
+    .grid-item:nth-child(4),
+    .grid-item:nth-child(5) { grid-column: span 12; aspect-ratio: 16/9; }
+
+    /* Process — single column */
+    .process-grid { grid-template-columns: 1fr !important; }
+    .process-card { padding: 32px 24px; }
+    .process-index { font-size: 44px; margin-bottom: 16px; }
+    .process-name { font-size: 18px; }
+
+    /* Section title sizing */
+    .section-title { font-size: clamp(28px, 8vw, 42px); }
+
+    /* Testimonial */
+    .testimonial-section { padding: 56px 16px; }
+    .quote-text { font-size: clamp(17px, 5vw, 22px); }
+    .quote-mark { font-size: 60px; }
+
+    /* Pricing */
+    #packages { padding: 56px 16px !important; }
+    #packages > div > div[style*="grid-template-columns:repeat(3"] {
+      grid-template-columns: 1fr !important;
+      border-radius: 4px;
+    }
+
+    /* Virtual staging */
+    #staging { padding: 56px 16px !important; }
+    #staging > div > div[style*="grid-template-columns:1fr 1fr"] {
+      grid-template-columns: 1fr !important;
+      gap: 32px !important;
+    }
+    #staging .staging-before-after { grid-template-columns: 1fr 1fr !important; }
+
+    /* CTA */
+    .cta-section { padding: 56px 16px; }
+    .cta-section .section-title { font-size: clamp(26px, 7vw, 38px); }
+    .cta-section > div { flex-direction: column; align-items: center; }
+
+    /* Footer */
+    footer { padding: 24px 16px; gap: 12px; }
+    .footer-links { gap: 12px; }
+    .footer-links a { font-size: 11px; }
+    .footer-copy { font-size: 11px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Lens<span>&</span>Property</div>
+
+  <!-- Desktop links -->
+  <ul class="nav-links">
+    <li><a href="#work" data-i18n="nav_work">Work</a></li>
+    <li><a href="#process" data-i18n="nav_process">Process</a></li>
+    <li><a href="#packages" data-i18n="nav_packages">Pricing</a></li>
+    <li><a href="#staging" data-i18n="nav_staging">Staging</a></li>
+    <li><a href="#contact" data-i18n="nav_contact">Contact</a></li>
+  </ul>
+
+  <!-- Desktop right cluster: language selector + CTA -->
+  <div class="nav-right">
+    <!-- Language selector -->
+    <div class="lang-wrap">
+      <button class="lang-btn" onclick="toggleLangMenu()" aria-label="Select language">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        <span class="lang-current">EN</span>
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="lang-menu" id="lang-menu">
+        <button onclick="setLang('en')" class="lang-opt active" id="lang-en">🇺🇸 English</button>
+        <button onclick="setLang('es')" class="lang-opt" id="lang-es">🇪🇸 Español</button>
+        <button onclick="setLang('de')" class="lang-opt" id="lang-de">🇩🇪 Deutsch</button>
+        <button onclick="setLang('fr')" class="lang-opt" id="lang-fr">🇫🇷 Français</button>
+      </div>
+    </div>
+    <!-- Desktop CTA -->
+    <a href="mailto:agbonlahor.b.k@gmail.com?subject=Book%20a%20Tour&body=Hi%2C%20I%27d%20like%20to%20book%20a%20cinematic%20walkthrough%20tour%20video%20for%20my%20listing.%20Please%20let%20me%20know%20the%20next%20steps." class="nav-cta" data-i18n="nav_cta">Book a Tour</a>
+    <!-- Mobile hamburger (hidden on desktop) -->
+    <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile menu drawer -->
+<div class="mobile-menu" id="mobile-menu">
+  <ul>
+    <li><a href="#work" onclick="closeMobileMenu()" data-i18n="nav_work">Work</a></li>
+    <li><a href="#process" onclick="closeMobileMenu()" data-i18n="nav_process">Process</a></li>
+    <li><a href="#packages" onclick="closeMobileMenu()" data-i18n="nav_packages">Pricing</a></li>
+    <li><a href="#staging" onclick="closeMobileMenu()" data-i18n="nav_staging">Staging</a></li>
+    <li><a href="#contact" onclick="closeMobileMenu()" data-i18n="nav_contact">Contact</a></li>
+    <li class="mob-lang">
+      <span style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);">Language</span>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+        <button onclick="setLang('en');closeMobileMenu()" class="mob-lang-btn" id="mob-lang-en">🇺🇸 EN</button>
+        <button onclick="setLang('es');closeMobileMenu()" class="mob-lang-btn" id="mob-lang-es">🇪🇸 ES</button>
+        <button onclick="setLang('de');closeMobileMenu()" class="mob-lang-btn" id="mob-lang-de">🇩🇪 DE</button>
+        <button onclick="setLang('fr');closeMobileMenu()" class="mob-lang-btn" id="mob-lang-fr">🇫🇷 FR</button>
+      </div>
+    </li>
+  </ul>
+</div>
+<div class="mobile-overlay" id="mobile-overlay" onclick="closeMobileMenu()"></div>
+
+<!-- HERO -->
+<div class="hero">
+
+  <!-- ╔═══════════════════════════════════════════════════════════════╗
+       ║  🎬 MAIN BACKGROUND VIDEO GOES HERE                            ║
+       ║                                                                 ║
+       ║  This is the video that plays behind the headline text         ║
+       ║  ("Still photos don't close deals. Motion does.")               ║
+       ║                                                                 ║
+       ║  TO LINK YOUR VIDEO:                                            ║
+       ║  1. Put your file in a "videos" folder next to this HTML file  ║
+       ║  2. Name it hero.mp4 (or change the filename below to match)   ║
+       ║  3. Replace "videos/hero.mp4" in the line below                ║
+       ║                                                                 ║
+       ║  Example: <source src="videos/my-showreel.mp4" type="video/mp4">║
+       ╚═══════════════════════════════════════════════════════════════╝ -->
+  <video
+    class="hero-video"
+    autoplay muted loop playsinline
+    aria-hidden="true"
+  >
+    <source src="videos/hero.mp4" type="video/mp4">
+    <!-- ↑↑↑ CHANGE "videos/hero.mp4" TO YOUR VIDEO'S PATH/FILENAME ↑↑↑ -->
+  </video>
+  <!-- 🎬 END MAIN BACKGROUND VIDEO -->
+
+  <!-- Fallback gradient + light-leak animation.
+       Only shows if hero.mp4 fails to load (wrong filename/path)
+       or while the video is buffering. Sits BEHIND the video (z-index 0)
+       so it will never cover your video once it's linked correctly. -->
+  <div class="hero-bg-fallback" style="z-index:0;"></div>
+  <div style="position:absolute;inset:0;overflow:hidden;z-index:0;">
+    <div style="position:absolute;top:-20%;left:-10%;width:60%;height:60%;background:radial-gradient(ellipse,rgba(201,169,110,0.08) 0%,transparent 70%);animation:drift 12s ease-in-out infinite alternate;"></div>
+    <div style="position:absolute;bottom:-20%;right:-10%;width:50%;height:50%;background:radial-gradient(ellipse,rgba(100,150,120,0.05) 0%,transparent 70%);animation:drift2 15s ease-in-out infinite alternate;"></div>
+  </div>
+  <style>
+    @keyframes drift { from{transform:translate(0,0) scale(1);} to{transform:translate(60px,-40px) scale(1.3);} }
+    @keyframes drift2 { from{transform:translate(0,0) scale(1);} to{transform:translate(-50px,30px) scale(1.2);} }
+  </style>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow" data-i18n="hero_eyebrow">Cinematic Real Estate</div>
+    <h1 class="hero-headline">
+      <span class="hero-line1" data-i18n="hero_line1">Your Phone Shoots It.</span>
+      <span class="hero-line2" data-i18n="hero_line2">We Make It Cinematic.</span>
+    </h1>
+    <p class="hero-sub">
+      <span data-i18n="hero_sub">We transform static listing photos into cinematic walkthrough videos that make buyers feel at home before they arrive. No expensive photographers. No complex production. Just stunning walkthrough videos that buyers can't ignore.</span>
+    </p>
+    <div class="hero-actions">
+      <a href="#work" class="btn-primary">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        <span data-i18n="hero_btn1">See the work</span>
+      </a>
+      <a href="#contact" class="btn-ghost" data-i18n="hero_btn2">Get your listing moving</a>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat-item">
+    <div class="stat-number">3.2<sup>×</sup></div>
+    <div class="stat-label" data-i18n="stats_enquiries">More enquiries</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-number">48<sup>h</sup></div>
+    <div class="stat-label" data-i18n="stats_turnaround">Turnaround</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-number">120<sup>+</sup></div>
+    <div class="stat-label" data-i18n="stats_listings">Listings produced</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-number">94<sup>%</sup></div>
+    <div class="stat-label" data-i18n="stats_agents">Agents return</div>
+  </div>
+</div>
+
+<!-- WORK GRID -->
+<section id="work">
+  <div class="work-header">
+    <div>
+      <div class="section-eyebrow" data-i18n="portfolio_eyebrow">Portfolio</div>
+    </div>
+    <p class="section-sub" data-i18n="portfolio_sub">From luxury villas to studio apartments — every walkthrough crafted to hold attention and close faster.</p>
+  </div>
+</section>
+
+<!-- Full-width grid (outside max-width constraint) -->
+<div style="padding: 0 48px; margin-bottom: 100px;" id="grid-wrap">
+  <div class="grid">
+
+    <!-- ═══════════════════════════════════════════════════════════
+         CARD 1 — FEATURED (spans full width top row)
+         Property: Luxury Florida Villa
+         📁 File: videos/listing1.mp4
+         ═══════════════════════════════════════════════════════════ -->
+    <div class="grid-item">
+      <video autoplay muted loop playsinline
+        style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(0.7);transition:filter 0.4s,transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94);">
+        <source src="videos/listing1.mp4" type="video/mp4">
+      </video>
+      <div class="grid-thumb-placeholder" style="z-index:0;background:linear-gradient(135deg,#1a1208,#0d1208);"></div>
+      <div class="grid-overlay">
+        <div class="overlay-tag">Featured · Luxury Villa</div>
+        <div class="overlay-title">The Palmwood Residence<br>Miami, FL</div>
+        <div class="overlay-meta">5 Bed · $3.8M · White stucco, walnut accents, tropical landscaping</div>
+      </div>
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;">
+        <div class="play-ring"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         CARD 2 — High-Rise Penthouse
+         📁 File: videos/listing2.mp4
+         ═══════════════════════════════════════════════════════════ -->
+    <div class="grid-item">
+      <video autoplay muted loop playsinline
+        style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(0.7);transition:filter 0.4s,transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94);">
+        <source src="videos/listing2.mp4" type="video/mp4">
+      </video>
+      <div class="grid-thumb-placeholder" style="z-index:0;background:linear-gradient(135deg,#0a0e18,#0d0d1a);"></div>
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;">
+        <div class="play-ring"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+      </div>
+      <div class="grid-overlay">
+        <div class="overlay-tag">Penthouse · Luxury</div>
+        <div class="overlay-title">SkyTower Penthouse<br>Chicago, IL</div>
+        <div class="overlay-meta">3 Bed · $2.4M · Calacatta marble, city skyline views</div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         CARD 3 — Modern Condo
+         📁 File: videos/listing3.mp4
+         ═══════════════════════════════════════════════════════════ -->
+    <div class="grid-item">
+      <video autoplay muted loop playsinline
+        style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(0.7);transition:filter 0.4s,transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94);">
+        <source src="videos/listing3.mp4" type="video/mp4">
+      </video>
+      <div class="grid-thumb-placeholder" style="z-index:0;background:linear-gradient(135deg,#0d1010,#0a0a0a);"></div>
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;">
+        <div class="play-ring"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+      </div>
+      <div class="grid-overlay">
+        <div class="overlay-tag">Condo · Minimalist</div>
+        <div class="overlay-title">The Nordic Flat<br>Seattle, WA</div>
+        <div class="overlay-meta">2 Bed · $895K · Scandinavian minimalist, walnut &amp; charcoal</div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         CARD 4 — Suburban Family Home
+         📁 File: videos/listing4.mp4
+         ═══════════════════════════════════════════════════════════ -->
+    <div class="grid-item">
+      <video autoplay muted loop playsinline
+        style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(0.7);transition:filter 0.4s,transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94);">
+        <source src="videos/listing4.mp4" type="video/mp4">
+      </video>
+      <div class="grid-thumb-placeholder" style="z-index:0;background:linear-gradient(135deg,#0e1008,#0a0a0a);"></div>
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;">
+        <div class="play-ring"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+      </div>
+      <div class="grid-overlay">
+        <div class="overlay-tag">Family Home · Farmhouse</div>
+        <div class="overlay-title">The Elm Craftsman<br>Nashville, TN</div>
+        <div class="overlay-meta">4 Bed · $1.1M · White shaker, oak floors, covered porch</div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         CARD 5 — Studio Apartment
+         📁 File: videos/listing5.mp4
+         ═══════════════════════════════════════════════════════════ -->
+    <div class="grid-item">
+      <video autoplay muted loop playsinline
+        style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(0.7);transition:filter 0.4s,transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94);">
+        <source src="videos/listing5.mp4" type="video/mp4">
+      </video>
+      <div class="grid-thumb-placeholder" style="z-index:0;background:linear-gradient(135deg,#121212,#0a0a0a);"></div>
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;">
+        <div class="play-ring"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+      </div>
+      <div class="grid-overlay">
+        <div class="overlay-tag">Studio · Contemporary</div>
+        <div class="overlay-title">Urban One<br>Austin, TX</div>
+        <div class="overlay-meta">Studio · $385K · Cream &amp; matte black, smart compact layout</div>
+      </div>
+    </div>
+
+
+  </div>
+</div>
+
+<!-- PROCESS -->
+<section id="process" class="process-section">
+  <div class="section-eyebrow" data-i18n="process_eyebrow">Process</div>
+  <h2 class="section-title">Photos in.<br>Cinema out.</h2>
+  <p class="section-sub">Works for any property. Luxury villa to studio apartment — if you can photograph it, we can make it cinematic.</p>
+
+  <div class="process-grid">
+    <div class="process-card">
+      <div class="process-accent"></div>
+      <div class="process-index">01</div>
+      <div class="process-name">You take the photos</div>
+      <div class="process-desc">Use your phone. Walk through the property and shoot each room. No special equipment, no staging crew — just your device and a steady hand.</div>
+    </div>
+    <div class="process-card">
+      <div class="process-accent"></div>
+      <div class="process-index">02</div>
+      <div class="process-name">Share the photos</div>
+      <div class="process-desc">Send us your images via email or our simple upload link. Any format, any resolution — we handle everything from there.</div>
+    </div>
+    <div class="process-card">
+      <div class="process-accent"></div>
+      <div class="process-index">03</div>
+      <div class="process-name">We build the walkthrough</div>
+      <div class="process-desc">Our team transforms your photos into a cinematic walkthrough video — smooth motion, professional colour grading, and licensed music.</div>
+    </div>
+    <div class="process-card">
+      <div class="process-accent"></div>
+      <div class="process-index">04</div>
+      <div class="process-name">Post. Close. Repeat.</div>
+      <div class="process-desc">Receive your ready-to-publish video within 48 hours. Post to MLS, Instagram, and YouTube — and watch the enquiries come in.</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- PRICING -->
+<section id="packages" style="border-top: 1px solid var(--border); max-width:100%; padding: 100px 48px;">
+  <div style="max-width:1280px; margin:0 auto;">
+    <div style="text-align:center; margin-bottom:64px;">
+      <div class="section-eyebrow">Pricing</div>
+      <h2 class="section-title">Simple, transparent pricing.</h2>
+      <p class="section-sub" style="margin:0 auto;">No hidden fees. No surprises. Just cinematic results.</p>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:2px; background:var(--border); border:1px solid var(--border); border-radius:4px; overflow:hidden;">
+
+      <!-- ESSENTIAL -->
+      <div style="background:var(--deep); padding:48px 36px; position:relative; display:flex; flex-direction:column;">
+        <div style="font-size:10px; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:var(--muted); margin-bottom:20px;">Starter</div>
+        <div style="font-size:28px; font-weight:300; color:var(--white); letter-spacing:-0.02em; margin-bottom:6px;">Essential</div>
+        <div style="font-size:13px; color:var(--muted); font-weight:300; margin-bottom:32px; line-height:1.5;">Perfect for single listings and first-time clients.</div>
+        <div style="margin-bottom:36px;">
+          <span style="font-size:44px; font-weight:200; color:var(--white); letter-spacing:-0.03em;">$49</span><span style="font-size:20px; font-weight:300; color:var(--gold);">.99</span>
+          <div style="font-size:11px; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase; margin-top:4px;">per listing video</div>
+        </div>
+        <ul style="list-style:none; display:flex; flex-direction:column; gap:14px; margin-bottom:40px; flex:1;">
+          <li style="display:flex; align-items:center; gap:12px; font-size:14px; font-weight:300; color:rgba(245,245,240,0.8);"><span style="color:var(--gold); font-size:16px;">✓</span> Up to 5 static photos</li>
+          <li style="display:flex; align-items:center; gap:12px; font-size:14px; font-weight:300; color:rgba(245,245,240,0.8);"><span style="color:var(--gold); font-size:16px;">✓</span> 30–60 second cinematic video</li>
+          <li style="display:flex; align-items:center; gap:12px; font-size:14px; font-weight:300; color:rgba(245,245,240,0.8);"><span style="color:var(--gold); font-size:16px;">✓</span> Licensed background music</li>
+          <li style="display:flex; align-items:center; gap:12px; font-size:14px; font-weight:300; color:rgba(245,245,240,0.8);"><span style="color:var(--gold); font-size:16px;">✓</span> 1080p HD delivery</li>
+          <li style="display:flex; align-items:center; gap:12px; font-size:14px; font-weight:300; color:rgba(245,245,240,0.8);"><span style="color:var(--gold); font-size:16px;">✓</span> 48-hour turnaround</li>
+          <li style="display:flex; align-items:center; gap:12px; font-size:14px; font-weight:300; color:var(--muted);"><span style="font-size:16px;">–</span> Branded intro &amp; outro</li>
+          <li style="display:flex; align-items:center; gap:12px; font-size:14px; font-weight:300; color:var(--muted);"><span style="font-size:16px;">–</span> Social media cut-downs</li>
+        </ul>
+        <a href="mailto:agbonlahor.b.k@gmail.com?subject=Essential%20Package%20%E2%80%94%20%2449.99&body=Hi%2C%20I%27d%20like%20to%20get%20started%20with%20the%20Essential%20package%20(%2449.99%20per%20listing%20video).%20Please%20let%20me%20know%20the%20next%20steps." class="btn-ghost" style="text-align:center; justify-content:center;">Get Started</a>
+      </div>
+
+      <!-- PRO LISTING (featured) -->
+      <div style="background:var(--deep); padding:48px 36px; position:relative; display:flex; flex-direction:column; border-left:2px solid var(--gold); border-right:2px solid var(--gold);">
+        <div style="position:absolute; top:0; left:50%; transform:translateX(-50%); background:var(--gold); color:var(--black); font-size:10px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; padding:6px 18px; border-radius:0 0 10px 10px; white-space:nowrap;">Most Popular</div>
+        <div style="font-size:10px; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:var(--gold); margin-bottom:20px; margin-top:20px;">Pro</div>
+        <div style="font-size:28px; font-weight:300; color:var(--white); letter-spacing:-0.02em; margin-bottom:6px;">Pro Listing</div>
+        <div style="font-size:13px; color:var(--muted); font-weight:300; margin-bottom:32px; line-height:1.5;">The complete package for serious agents and developers.</div>
+        <div style="margin-bottom:36px;">
+          <span style="font-size:44px; font-weight:200; color:var(--white); letter-spacing:-0.03em;">$79</span><span style="font-size:20px; font-weight:300; color:var(--gold);">.99</span>
+          <div style="font-size:11px; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase; margin-top:4px;">per listing video</div>
+        </div>
+        <ul style="list-style:none; display:flex; flex-direction:column; gap:14px; margin-bottom:40px; flex:1;">
+          <li style="display:flex; align-items:center; gap:12px; font-size:14px; font-weight:300; color:rgba(245,245,240,0.8);"><span style="color:var(--gold); font-size:16px;">✓</span> 6–15 static photos</li>
+          <li style="display:flex; align-items:center; gap:12px; font-size:14px; font-weight:300; color:rgba(245,245,240,0.8);"><span style="color:var(--gold); font-size:16px;">✓</span> 1–3 minute cinematic video</li>
+          <li style="display:flex; align-items:center; gap:12px; font-size:14px; font-weight:300; color:rgba(245,245,240,0.8);"><span style="color:var(--gold); font-size:16px;">✓</span> Licensed background music</li>
+          <li style="display:flex; align-items:center; gap:12px; font-size:14px; font-weight:300; color:rgba(245,245,240,0.8);"><span style="color:var(--gold); font-size:16px;">✓</span> 4K Ultra HD delivery</li>
+          <li style="display:flex; align-items:center; gap:12px; font-size:14px; font-weight:300; color:rgba(245,245,240,0.8);"><span style="color:var(--gold); font-size:16px;">✓</span> Branded intro &amp; outro</li>
+          <li style="display:flex; align-items:center; gap:12px; font-size:14px; font-weight:300; color:rgba(245,245,240,0.8);"><span style="color:var(--gold); font-size:16px;">✓</span> Social media cut-downs (Reels/Shorts)</li>
+          <li style="display:flex; align-items:center; gap:12px; font-size:14px; font-weight:300; color:rgba(245,245,240,0.8);"><span style="color:var(--gold); font-size:16px;">✓</span> 2 rounds of revisions</li>
+        </ul>
+        <a href="mailto:agbonlahor.b.k@gmail.com?subject=Pro%20Listing%20Package%20%E2%80%94%20%2479.99&body=Hi%2C%20I%27d%20like%20to%20book%20the%20Pro%20Listing%20package%20(%2479.99%20per%20listing%20video).%20Please%20let%20me%20know%20the%20next%20steps." class="btn-primary" style="text-align:center; justify-content:center;">Book This Package</a>
+      </div>
+
+      <!-- STUDIO DEAL -->
+      <div style="background:var(--deep); padding:48px 36px; position:relative; display:flex; flex-direction:column;">
+        <div style="font-size:10px; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:var(--muted); margin-bottom:20px;">Agency</div>
+        <div style="font-size:28px; font-weight:300; color:var(--white); letter-spacing:-0.02em; margin-bottom:6px;">Studio Deal</div>
+        <div style="font-size:13px; color:var(--muted); font-weight:300; margin-bottom:32px; line-height:1.5;">For agencies and developers with ongoing listing needs.</div>
+        <div style="margin-bottom:36px;">
+          <span style="font-size:44px; font-weight:200; color:var(--white); letter-spacing:-0.03em;">$299</span><span style="font-size:20px; font-weight:300; color:var(--gold);">.99</span>
+          <div style="font-size:11px; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase; margin-top:4px;">per month · 5 listings</div>
+        </div>
+        <ul style="list-style:none; display:flex; flex-direction:column; gap:14px; margin-bottom:40px; flex:1;">
+          <li style="display:flex; align-items:center; gap:12px; font-size:14px; font-weight:300; color:rgba(245,245,240,0.8);"><span style="color:var(--gold); font-size:16px;">✓</span> 5 Pro Listing videos per month</li>
+          <li style="display:flex; align-items:center; gap:12px; font-size:14px; font-weight:300; color:rgba(245,245,240,0.8);"><span style="color:var(--gold); font-size:16px;">✓</span> Priority 24-hour turnaround</li>
+          <li style="display:flex; align-items:center; gap:12px; font-size:14px; font-weight:300; color:rgba(245,245,240,0.8);"><span style="color:var(--gold); font-size:16px;">✓</span> Dedicated account manager</li>
+          <li style="display:flex; align-items:center; gap:12px; font-size:14px; font-weight:300; color:rgba(245,245,240,0.8);"><span style="color:var(--gold); font-size:16px;">✓</span> Custom branded</li>
+          <li style="display:flex; align-items:center; gap:12px; font-size:14px; font-weight:300; color:rgba(245,245,240,0.8);"><span style="color:var(--gold); font-size:16px;">✓</span> 5 revisions</li>
+        </ul>
+        <a href="mailto:agbonlahor.b.k@gmail.com?subject=Studio%20Deal%20Package%20%E2%80%94%20%24299.99&body=Hi%2C%20I%27m%20interested%20in%20the%20Studio%20Deal%20package%20(%24299.99%2Fmonth%20for%205%20listings).%20I%27d%20love%20to%20discuss%20how%20this%20could%20work%20for%20my%20agency." class="btn-ghost" style="text-align:center; justify-content:center;">Let's Talk</a>
+      </div>
+
+    </div>
+
+    <!-- Packages note -->
+    <p style="text-align:center; margin-top:36px; font-size:14px; font-weight:300; color:var(--muted); line-height:1.7;">
+      Not sure which package is right for you? <a data-i18n-href="cta_btn2" href="mailto:agbonlahor.b.k@gmail.com?subject=Package%20Advice&body=Hi%2C%20I%27m%20not%20sure%20which%20package%20is%20right%20for%20me.%20Could%20you%20help%20me%20choose%3F" style="color:var(--gold); text-decoration:none; border-bottom:1px solid rgba(201,169,110,0.3);">Send us a message</a> and we'll help you choose.
+    </p>
+  </div>
+</section>
+
+
+<!-- VIRTUAL STAGING -->
+<section id="staging" style="border-top:1px solid var(--border); max-width:100%; padding:100px 48px; background:var(--deep);">
+  <div style="max-width:1280px; margin:0 auto;">
+
+    <!-- Header -->
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:72px; align-items:start; margin-bottom:64px;" class="staging-header-grid">
+      <div>
+        <div class="section-eyebrow" data-i18n="staging_eyebrow">Add-On Service</div>
+        <h2 class="section-title" style="margin-bottom:20px;">Virtual<br>Staging.</h2>
+        <p style="font-size:15px; font-weight:300; color:var(--muted); line-height:1.8; margin-bottom:32px;">
+          Empty rooms don't inspire buyers. We digitally furnish your vacant property photos with premium, photorealistic furniture and décor — helping buyers visualise the full potential of every space without the cost of physical staging.
+        </p>
+        <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:14px;">
+          <a href="mailto:agbonlahor.b.k@gmail.com?subject=Virtual%20Staging%20Request&body=Hi%2C%20I%27d%20like%20to%20request%20virtual%20staging%20for%20my%20property." class="btn-primary">Request Virtual Staging</a>
+          <a href="#staging-examples" onclick="document.getElementById('staging-examples').scrollIntoView({behavior:'smooth'});return false;" class="btn-ghost">See Examples</a>
+        </div>
+        <p style="font-size:11px; color:var(--muted); letter-spacing:0.04em;">✦ Bundle with any video package for a discounted rate</p>
+      </div>
+      <ul style="list-style:none; display:flex; flex-direction:column; gap:16px;">
+        <li style="display:flex; gap:14px; font-size:14px; font-weight:300; color:rgba(245,245,240,0.8); line-height:1.5;"><span style="color:var(--gold); flex-shrink:0;">✓</span> Photorealistic furniture &amp; décor placement</li>
+        <li style="display:flex; gap:14px; font-size:14px; font-weight:300; color:rgba(245,245,240,0.8); line-height:1.5;"><span style="color:var(--gold); flex-shrink:0;">✓</span> Natural lighting &amp; shadow matched to your photo</li>
+        <li style="display:flex; gap:14px; font-size:14px; font-weight:300; color:rgba(245,245,240,0.8); line-height:1.5;"><span style="color:var(--gold); flex-shrink:0;">✓</span> Style options — Modern, Luxury, Minimalist, Farmhouse, Coastal</li>
+        <li style="display:flex; gap:14px; font-size:14px; font-weight:300; color:rgba(245,245,240,0.8); line-height:1.5;"><span style="color:var(--gold); flex-shrink:0;">✓</span> Before &amp; after delivery for every room</li>
+        <li style="display:flex; gap:14px; font-size:14px; font-weight:300; color:rgba(245,245,240,0.8); line-height:1.5;"><span style="color:var(--gold); flex-shrink:0;">✓</span> Works on any property type — condos, houses, offices</li>
+        <li style="display:flex; gap:14px; font-size:14px; font-weight:300; color:rgba(245,245,240,0.8); line-height:1.5;"><span style="color:var(--gold); flex-shrink:0;">✓</span> 48-hour turnaround per room</li>
+      </ul>
+    </div>
+
+
+    <!-- STAGING PRICING STRIP -->
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:2px; background:var(--border); border:1px solid var(--border); border-radius:8px; overflow:hidden; margin-bottom:56px;">
+      <!-- Per Room -->
+      <div style="background:var(--panel); padding:32px 28px; text-align:center;">
+        <div style="font-size:36px; font-weight:200; color:var(--white); letter-spacing:-0.03em; line-height:1;">
+          <span style="font-size:18px; font-weight:400; color:var(--gold); vertical-align:super; margin-right:2px;">$</span>25
+        </div>
+        <div style="font-size:10px; font-weight:600; letter-spacing:0.16em; text-transform:uppercase; color:var(--muted); margin-top:8px;">Per Room</div>
+      </div>
+      <!-- 5-Room Bundle -->
+      <div style="background:var(--deep); padding:32px 28px; text-align:center; border-left:2px solid var(--gold); border-right:2px solid var(--gold); position:relative;">
+        <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--black);font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:4px 14px;border-radius:0 0 8px 8px;white-space:nowrap;">Best Value</div>
+        <div style="font-size:36px; font-weight:200; color:var(--white); letter-spacing:-0.03em; line-height:1; margin-top:8px;">
+          <span style="font-size:18px; font-weight:400; color:var(--gold); vertical-align:super; margin-right:2px;">$</span>100
+        </div>
+        <div style="font-size:10px; font-weight:600; letter-spacing:0.16em; text-transform:uppercase; color:var(--muted); margin-top:8px;">5-Room Bundle</div>
+      </div>
+      <!-- Full Property -->
+      <div style="background:var(--panel); padding:32px 28px; text-align:center;">
+        <div style="font-size:36px; font-weight:200; color:var(--white); letter-spacing:-0.03em; line-height:1;">
+          <span style="font-size:18px; font-weight:400; color:var(--gold); vertical-align:super; margin-right:2px;">$</span>200
+        </div>
+        <div style="font-size:10px; font-weight:600; letter-spacing:0.16em; text-transform:uppercase; color:var(--muted); margin-top:8px;">Full Property</div>
+      </div>
+    </div>
+    <!-- End Staging Pricing Strip -->
+    <!-- Property type tabs -->
+    <div style="margin-bottom:28px;">
+      <p id="staging-examples" style="font-size:10px; font-weight:500; letter-spacing:0.18em; text-transform:uppercase; color:var(--muted); margin-bottom:16px;">Browse by property type</p>
+      <div style="display:flex; gap:6px; flex-wrap:wrap;">
+        <button class="stab active" onclick="showStaging(0,this)">Luxury Villa</button>
+        <button class="stab" onclick="showStaging(1,this)">Penthouse</button>
+        <button class="stab" onclick="showStaging(2,this)">Modern Condo</button>
+        <button class="stab" onclick="showStaging(3,this)">Suburban Home</button>
+        <button class="stab" onclick="showStaging(4,this)">Studio Apartment</button>
+      </div>
+    </div>
+
+    <!-- PANEL 0 — Luxury Villa · Living Room -->
+    <div class="sp" id="sp-0">
+      <div class="ba-wrap">
+        <div class="ba-cell">
+          <!-- 📁 BEFORE image: images/villa-living-before.jpeg -->
+          <img class="ba-img" src="images/villa-living-before.jpeg" alt="Luxury villa living room empty" onerror="this.style.display='none'">
+          <div class="ba-ph" style="background:linear-gradient(140deg,#141008,#0a0a0a);">
+            <span class="ba-ph-txt">Luxury Villa · Living Room<br><span style="color:var(--muted);font-size:10px;">Upload: images/villa-living-before.jpeg</span></span>
+          </div>
+          <div class="ba-tag ba-before">Before</div>
+        </div>
+        <div class="ba-cell">
+          <!-- 📁 AFTER image: images/villa-living-after.jpeg -->
+          <img class="ba-img" src="images/villa-living-after.jpeg" alt="Luxury villa living room staged" onerror="this.style.display='none'">
+          <div class="ba-ph" style="background:linear-gradient(140deg,#1c1506,#241a08);">
+            <span class="ba-ph-txt" style="color:rgba(201,169,110,0.6);">Virtually Staged<br><span style="color:var(--muted);font-size:10px;">Upload: images/villa-living-after.jpeg</span></span>
+          </div>
+          <div class="ba-tag ba-after">After</div>
+        </div>
+      </div>
+      <p class="ba-cap">Luxury Villa · Double-Height Living Room · Mid-Century Modern — cognac leather, travertine fireplace, brass chandelier</p>
+    </div>
+
+    <!-- PANEL 1 — Penthouse · Open Plan -->
+    <div class="sp hidden" id="sp-1">
+      <div class="ba-wrap">
+        <div class="ba-cell">
+          <!-- 📁 BEFORE image: images/penthouse-open-before.jpeg -->
+          <img class="ba-img" src="images/penthouse-open-before.jpeg" alt="Penthouse open plan empty" onerror="this.style.display='none'">
+          <div class="ba-ph" style="background:linear-gradient(140deg,#0a0e18,#0d0d0d);">
+            <span class="ba-ph-txt">Penthouse · Open Plan<br><span style="color:var(--muted);font-size:10px;">Upload: images/penthouse-open-before.jpeg</span></span>
+          </div>
+          <div class="ba-tag ba-before">Before</div>
+        </div>
+        <div class="ba-cell">
+          <!-- 📁 AFTER image: images/penthouse-open-after.jpeg -->
+          <img class="ba-img" src="images/penthouse-open-after.jpeg" alt="Penthouse open plan staged" onerror="this.style.display='none'">
+          <div class="ba-ph" style="background:linear-gradient(140deg,#0e1424,#12182e);">
+            <span class="ba-ph-txt" style="color:rgba(201,169,110,0.6);">Virtually Staged<br><span style="color:var(--muted);font-size:10px;">Upload: images/penthouse-open-after.jpeg</span></span>
+          </div>
+          <div class="ba-tag ba-after">After</div>
+        </div>
+      </div>
+      <p class="ba-cap">Penthouse · Open-Plan Living &amp; Dining · Contemporary Luxury — Calacatta marble island, walnut dining table, city skyline views</p>
+    </div>
+
+    <!-- PANEL 2 — Modern Condo · Bedroom -->
+    <div class="sp hidden" id="sp-2">
+      <div class="ba-wrap">
+        <div class="ba-cell">
+          <!-- 📁 BEFORE image: images/condo-bedroom-before.jpeg -->
+          <img class="ba-img" src="images/condo-bedroom-before.jpeg" alt="Modern condo bedroom empty" onerror="this.style.display='none'">
+          <div class="ba-ph" style="background:linear-gradient(140deg,#0d1010,#0a0a0a);">
+            <span class="ba-ph-txt">Modern Condo · Bedroom<br><span style="color:var(--muted);font-size:10px;">Upload: images/condo-bedroom-before.jpeg</span></span>
+          </div>
+          <div class="ba-tag ba-before">Before</div>
+        </div>
+        <div class="ba-cell">
+          <!-- 📁 AFTER image: images/condo-bedroom-after.jpeg -->
+          <img class="ba-img" src="images/condo-bedroom-after.jpeg" alt="Modern condo bedroom staged" onerror="this.style.display='none'">
+          <div class="ba-ph" style="background:linear-gradient(140deg,#101418,#141c22);">
+            <span class="ba-ph-txt" style="color:rgba(201,169,110,0.6);">Virtually Staged<br><span style="color:var(--muted);font-size:10px;">Upload: images/condo-bedroom-after.jpeg</span></span>
+          </div>
+          <div class="ba-tag ba-after">After</div>
+        </div>
+      </div>
+      <p class="ba-cap">Modern Condo · Primary Bedroom · Scandinavian Minimalist — charcoal linen bed, walnut nightstands, floor-to-ceiling window</p>
+    </div>
+
+    <!-- PANEL 3 — Suburban Home · Kitchen & Dining -->
+    <div class="sp hidden" id="sp-3">
+      <div class="ba-wrap">
+        <div class="ba-cell">
+          <!-- 📁 BEFORE image: images/suburban-kitchen-before.jpeg -->
+          <img class="ba-img" src="images/suburban-kitchen-before.jpeg" alt="Suburban home kitchen empty" onerror="this.style.display='none'">
+          <div class="ba-ph" style="background:linear-gradient(140deg,#0e1008,#0a0a0a);">
+            <span class="ba-ph-txt">Suburban Home · Kitchen &amp; Dining<br><span style="color:var(--muted);font-size:10px;">Upload: images/suburban-kitchen-before.jpeg</span></span>
+          </div>
+          <div class="ba-tag ba-before">Before</div>
+        </div>
+        <div class="ba-cell">
+          <!-- 📁 AFTER image: images/suburban-kitchen-after.jpeg -->
+          <img class="ba-img" src="images/suburban-kitchen-after.jpeg" alt="Suburban home kitchen staged" onerror="this.style.display='none'">
+          <div class="ba-ph" style="background:linear-gradient(140deg,#141a0a,#1a2210);">
+            <span class="ba-ph-txt" style="color:rgba(201,169,110,0.6);">Virtually Staged<br><span style="color:var(--muted);font-size:10px;">Upload: images/suburban-kitchen-after.jpeg</span></span>
+          </div>
+          <div class="ba-tag ba-after">After</div>
+        </div>
+      </div>
+      <p class="ba-cap">Suburban Family Home · Kitchen &amp; Dining — Warm Transitional Farmhouse with white shaker cabinets, butcher block island &amp; oak dining set</p>
+    </div>
+
+    <!-- PANEL 4 — Studio Apartment · Open Plan -->
+    <div class="sp hidden" id="sp-4">
+      <div class="ba-wrap">
+        <div class="ba-cell">
+          <!-- 📁 BEFORE image: images/studio-open-before.jpeg -->
+          <img class="ba-img" src="images/studio-open-before.jpeg" alt="Studio apartment open plan empty" onerror="this.style.display='none'">
+          <div class="ba-ph" style="background:linear-gradient(140deg,#121212,#0a0a0a);">
+            <span class="ba-ph-txt">Studio Apartment · Open Plan<br><span style="color:var(--muted);font-size:10px;">Upload: images/studio-open-before.jpeg</span></span>
+          </div>
+          <div class="ba-tag ba-before">Before</div>
+        </div>
+        <div class="ba-cell">
+          <!-- 📁 AFTER image: images/studio-open-after.jpeg -->
+          <img class="ba-img" src="images/studio-open-after.jpeg" alt="Studio apartment open plan staged" onerror="this.style.display='none'">
+          <div class="ba-ph" style="background:linear-gradient(140deg,#16121e,#1c1828);">
+            <span class="ba-ph-txt" style="color:rgba(201,169,110,0.6);">Virtually Staged<br><span style="color:var(--muted);font-size:10px;">Upload: images/studio-open-after.jpeg</span></span>
+          </div>
+          <div class="ba-tag ba-after">After</div>
+        </div>
+      </div>
+      <p class="ba-cap">Studio Apartment · Open-Plan Living — Contemporary Compact with cream sofa, matte black shelving &amp; space-saving dining nook</p>
+    </div>
+
+  </div>
+</section>
+
+<style>
+.stab {
+  background: var(--panel); border: 1px solid var(--border);
+  color: var(--muted); font-size: 12px; font-weight: 500;
+  letter-spacing: 0.04em; padding: 9px 18px; border-radius: 30px;
+  cursor: pointer; transition: all 0.2s; font-family: inherit;
+}
+.stab:hover { color: var(--white); border-color: rgba(255,255,255,0.25); }
+.stab.active { background: var(--gold); color: var(--black); border-color: var(--gold); font-weight: 600; }
+.sp { animation: spIn 0.3s ease; }
+.sp.hidden { display: none; }
+@keyframes spIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+.ba-wrap {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 3px; background: var(--border);
+  border: 1px solid var(--border); border-radius: 8px;
+  overflow: hidden; aspect-ratio: 16/7; margin-bottom: 14px;
+}
+.ba-cell { position: relative; overflow: hidden; background: var(--panel); }
+.ba-img { width:100%; height:100%; object-fit:cover; display:block; transition:transform 0.5s ease; }
+.ba-cell:hover .ba-img { transform: scale(1.04); }
+.ba-ph {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+/* Hide placeholder when real image loads */
+.ba-cell:has(.ba-img[src]:not([src=""])) .ba-ph { display:none; }
+.ba-ph-txt {
+  font-size: 12px; font-weight: 300; color: rgba(245,245,240,0.3);
+  text-align: center; padding: 0 20px; line-height: 1.7; letter-spacing: 0.03em;
+}
+.ba-tag {
+  position: absolute; top: 14px; left: 14px;
+  font-size: 9px; font-weight: 700; letter-spacing: 0.16em;
+  text-transform: uppercase; padding: 4px 12px; border-radius: 20px;
+  backdrop-filter: blur(10px);
+}
+.ba-before { background: rgba(0,0,0,0.6); color: rgba(245,245,240,0.65); }
+.ba-after  { background: rgba(201,169,110,0.18); color: var(--gold); border: 1px solid rgba(201,169,110,0.35); }
+.ba-cap {
+  font-size: 12px; font-weight: 300; color: var(--muted);
+  text-align: center; letter-spacing: 0.03em; line-height: 1.6;
+}
+.staging-header-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; }
+@media (max-width: 900px) {
+  .staging-header-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
+  .ba-wrap { aspect-ratio: 4/3; }
+  #staging { padding: 72px 24px !important; }
+}
+@media (max-width: 600px) {
+  .ba-wrap { grid-template-columns: 1fr; aspect-ratio: auto; }
+  .ba-cell { aspect-ratio: 4/3; }
+  .stab { font-size: 11px; padding: 7px 14px; }
+  #staging { padding: 56px 16px !important; }
+}
+</style>
+<script>
+function showStaging(i, btn) {
+  document.querySelectorAll('.sp').forEach(p => p.classList.add('hidden'));
+  document.querySelectorAll('.stab').forEach(b => b.classList.remove('active'));
+  document.getElementById('sp-' + i).classList.remove('hidden');
+  btn.classList.add('active');
+}
+</script>
+
+
+<!-- TESTIMONIAL -->
+<div class="testimonial-section">
+  <blockquote>
+    <span class="quote-mark">"</span>
+    <p class="quote-text">I sent them iPhone photos of a vacant studio. What came back looked like it was shot by a production crew. My client was floored. We had an offer in 4 days.</p>
+    <div class="quote-author"><span>—</span> Marcus Webb, Douglas Elliman · Austin, TX</div>
+  </blockquote>
+</div>
+
+<!-- CTA -->
+<div class="cta-section" id="contact">
+  <div class="section-eyebrow" data-i18n="cta_eyebrow">Ready?</div>
+  <h2 class="section-title" style="max-width:600px;margin:0 auto 16px;">Your next listing deserves this.</h2>
+  <p class="section-sub" style="max-width:440px;margin:0 auto 44px;">One video. More enquiries. Faster closings. Let's get it made.</p>
+  <div style="display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;">
+    <a href="mailto:agbonlahor.b.k@gmail.com" class="btn-primary" style="font-size:15px;padding:16px 32px;">
+      <span data-i18n="cta_btn1">Start a project</span>
+    </a>
+    <a href="mailto:agbonlahor.b.k@gmail.com" class="btn-ghost">Email us</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Lens<span>&</span>Property</div>
+  <p class="footer-copy">© 2026 Lens & Property. All rights reserved.</p>
+  <ul class="footer-links">
+    <li><a href="#work">Portfolio</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#packages">Pricing</a></li>
+    <li><a href="#staging">Staging</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</footer>
+
+<script>
+  // Smooth nav transparency on scroll
+  const nav = document.querySelector('nav');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 80) {
+      nav.style.background = 'rgba(10,10,10,0.94)';
+    } else {
+      nav.style.background = 'rgba(10,10,10,0.72)';
+    }
+  }, { passive: true });
+
+  // Fade-in on scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.grid-item, .process-card, .stat-item').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(24px)';
+    el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    observer.observe(el);
+  });
+
+  // Staggered grid animation
+  document.querySelectorAll('.grid-item').forEach((el, i) => {
+    el.style.transitionDelay = `${i * 0.06}s`;
+  });
+
+  document.querySelectorAll('.process-card').forEach((el, i) => {
+    el.style.transitionDelay = `${i * 0.1}s`;
+  });
+
+  // Scroll hint hide on scroll
+  const hint = document.querySelector('.scroll-hint');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 100) hint.style.opacity = '0';
+    else hint.style.opacity = null;
+  }, { passive: true });
+</script>
+
+
+<script>
+// ── MOBILE MENU ──────────────────────────────────────────────
+function toggleMobileMenu() {
+  const menu = document.getElementById('mobile-menu');
+  const overlay = document.getElementById('mobile-overlay');
+  const burger = document.getElementById('hamburger');
+  const isOpen = menu.classList.contains('open');
+  if (isOpen) {
+    menu.classList.remove('open');
+    overlay.classList.remove('open');
+    burger.classList.remove('open');
+  } else {
+    menu.classList.add('open');
+    overlay.classList.add('open');
+    burger.classList.add('open');
+  }
+}
+function closeMobileMenu() {
+  document.getElementById('mobile-menu').classList.remove('open');
+  document.getElementById('mobile-overlay').classList.remove('open');
+  document.getElementById('hamburger').classList.remove('open');
+}
+
+// Close lang menu on outside click
+document.addEventListener('click', function(e) {
+  const wrap = document.querySelector('.lang-wrap');
+  if (wrap && !wrap.contains(e.target)) {
+    document.getElementById('lang-menu').classList.remove('open');
+  }
+});
+
+function toggleLangMenu() {
+  document.getElementById('lang-menu').classList.toggle('open');
+}
+
+// ── TRANSLATIONS ──────────────────────────────────────────────
+const translations = {
+  en: {
+    nav_work: 'Work', nav_process: 'Process', nav_packages: 'Pricing',
+    nav_staging: 'Staging', nav_contact: 'Contact', nav_cta: 'Book a Tour',
+    hero_eyebrow: 'Cinematic Real Estate',
+    hero_line1: 'Your Phone Shoots It.',
+    hero_line2: 'We Make It Cinematic.',
+    hero_sub: 'We transform static listing photos into cinematic walkthrough videos that make buyers feel at home before they arrive. No expensive photographers. No complex production. Just stunning walkthrough videos that buyers cannot ignore.',
+    hero_btn1: 'See the work', hero_btn2: 'Get your listing moving',
+    stats_enquiries: 'More enquiries', stats_turnaround: 'Turnaround',
+    stats_listings: 'Listings produced', stats_agents: 'Agents return',
+    portfolio_eyebrow: 'Portfolio',
+    portfolio_sub: 'From luxury villas to studio apartments — every walkthrough crafted to hold attention and close faster.',
+    process_eyebrow: 'Process', process_title1: 'Photos in.', process_title2: 'Cinema out.',
+    process_sub: 'Works for any property. Luxury villa to studio apartment — if you can photograph it, we can make it cinematic.',
+    staging_eyebrow: 'Add-On Service',
+    cta_eyebrow: 'Ready?',
+    cta_title: 'Your next listing deserves this.',
+    cta_sub: 'One video. More enquiries. Faster closings. Let us get it made.',
+    cta_btn1: 'Start a project', cta_btn2: 'Email us',
+  },
+  es: {
+    nav_work: 'Trabajo', nav_process: 'Proceso', nav_packages: 'Precios',
+    nav_staging: 'Staging', nav_contact: 'Contacto', nav_cta: 'Reservar Tour',
+    hero_eyebrow: 'Bienes Raíces Cinematográficos',
+    hero_line1: 'Tu teléfono lo capta.',
+    hero_line2: 'Nosotros lo hacemos cinematográfico.',
+    hero_sub: 'Transformamos fotos estaticas de propiedades en videos de recorrido cinematografico que hacen que los compradores se sientan en casa antes de llegar. Sin fotografos costosos. Sin produccion compleja. Solo videos impresionantes que los compradores no pueden ignorar.',
+    hero_btn1: 'Ver el trabajo', hero_btn2: 'Mueve tu propiedad',
+    stats_enquiries: 'Más consultas', stats_turnaround: 'Entrega',
+    stats_listings: 'Propiedades producidas', stats_agents: 'Agentes regresan',
+    portfolio_eyebrow: 'Portafolio',
+    portfolio_sub: 'Desde villas de lujo hasta estudios — cada recorrido diseñado para captar atención y cerrar más rápido.',
+    process_eyebrow: 'Proceso', process_title1: 'Fotos dentro.', process_title2: 'Cine afuera.',
+    process_sub: 'Funciona para cualquier propiedad. Villa de lujo o estudio — si puedes fotografiarlo, podemos hacerlo cinematográfico.',
+    staging_eyebrow: 'Servicio Adicional',
+    cta_eyebrow: '¿Listo?',
+    cta_title: 'Tu próxima propiedad lo merece.',
+    cta_sub: 'Un video. Más consultas. Cierres más rápidos. Hagámoslo.',
+    cta_btn1: 'Iniciar proyecto', cta_btn2: 'Escríbenos',
+  },
+  de: {
+    nav_work: 'Arbeiten', nav_process: 'Prozess', nav_packages: 'Preise',
+    nav_staging: 'Staging', nav_contact: 'Kontakt', nav_cta: 'Tour buchen',
+    hero_eyebrow: 'Cinematisches Immobilienmarketing',
+    hero_line1: 'Ihr Handy nimmt auf.',
+    hero_line2: 'Wir machen es cinematisch.',
+    hero_sub: 'Wir verwandeln statische Immobilienfotos in cinematische Rundgangsvideos, die Käufer schon vor dem ersten Besuch zu Hause fühlen lassen. Keine teuren Fotografen. Keine aufwendige Produktion. Nur atemberaubende Videos, die Käufer nicht ignorieren können.',
+    hero_btn1: 'Arbeiten ansehen', hero_btn2: 'Ihr Inserat bewegen',
+    stats_enquiries: 'Mehr Anfragen', stats_turnaround: 'Lieferzeit',
+    stats_listings: 'Produzierte Inserate', stats_agents: 'Makler kehren zurück',
+    portfolio_eyebrow: 'Portfolio',
+    portfolio_sub: 'Von Luxusvillen bis Studioapartments — jeder Rundgang gestaltet, um Aufmerksamkeit zu halten und schneller abzuschließen.',
+    process_eyebrow: 'Prozess', process_title1: 'Fotos rein.', process_title2: 'Kino raus.',
+    process_sub: 'Funktioniert für jede Immobilie. Von der Luxusvilla bis zum Studio — wenn Sie es fotografieren können, machen wir es cinematisch.',
+    staging_eyebrow: 'Zusatzservice',
+    cta_eyebrow: 'Bereit?',
+    cta_title: 'Ihr nächstes Inserat verdient das.',
+    cta_sub: 'Ein Video. Mehr Anfragen. Schnellere Abschlüsse. Lassen Sie es uns umsetzen.',
+    cta_btn1: 'Projekt starten', cta_btn2: 'E-Mail senden',
+  },
+  fr: {
+    nav_work: 'Travaux', nav_process: 'Processus', nav_packages: 'Tarifs',
+    nav_staging: 'Staging', nav_contact: 'Contact', nav_cta: 'Réserver une visite',
+    hero_eyebrow: 'Immobilier Cinématique',
+    hero_line1: 'Votre téléphone filme.',
+    hero_line2: 'Nous le rendons cinématique.',
+    hero_sub: 'Nous transformons vos photos statiques en videos de visite cinematiques qui donnent aux acheteurs une impression de chez-soi avant meme d\'arriver. Sans photographes couteux. Sans production complexe. Juste des videos epoustouflantes que les acheteurs ne peuvent pas ignorer.',
+    hero_btn1: 'Voir les réalisations', hero_btn2: 'Mettre votre bien en mouvement',
+    stats_enquiries: 'Plus de demandes', stats_turnaround: 'Délai de livraison',
+    stats_listings: 'Biens produits', stats_agents: 'Agents fidèles',
+    portfolio_eyebrow: 'Portfolio',
+    portfolio_sub: 'Des villas de luxe aux studios — chaque visite concue pour retenir l\'attention et conclure plus rapidement.',
+    process_eyebrow: 'Processus', process_title1: 'Photos en entrée.', process_title2: 'Cinéma en sortie.',
+    process_sub: 'Fonctionne pour tout type de bien. Villa de luxe ou studio — si vous pouvez le photographier, nous pouvons le rendre cinématique.',
+    staging_eyebrow: 'Service complémentaire',
+    cta_eyebrow: 'Prêt ?',
+    cta_title: 'Votre prochaine annonce le mérite.',
+    cta_sub: 'Une vidéo. Plus de demandes. Des ventes plus rapides. Faisons-le ensemble.',
+    cta_btn1: 'Démarrer un projet', cta_btn2: 'Nous écrire',
+  }
+};
+
+const langLabels = { en: 'EN', es: 'ES', de: 'DE', fr: 'FR' };
+
+function setLang(lang) {
+  const t = translations[lang];
+  if (!t) return;
+
+  // Update all data-i18n elements
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (t[key]) el.textContent = t[key];
+  });
+
+  // Update lang button label
+  const cur = document.querySelector('.lang-current');
+  if (cur) cur.textContent = langLabels[lang];
+
+  // Active states — desktop
+  document.querySelectorAll('.lang-opt').forEach(b => b.classList.remove('active'));
+  const deskBtn = document.getElementById('lang-' + lang);
+  if (deskBtn) deskBtn.classList.add('active');
+
+  // Active states — mobile
+  document.querySelectorAll('.mob-lang-btn').forEach(b => b.classList.remove('active'));
+  const mobBtn = document.getElementById('mob-lang-' + lang);
+  if (mobBtn) mobBtn.classList.add('active');
+
+  // Close lang menu
+  document.getElementById('lang-menu').classList.remove('open');
+
+  // Store preference
+  localStorage.setItem('lp-lang', lang);
+}
+
+// Auto-apply saved or browser language on load
+(function() {
+  const saved = localStorage.getItem('lp-lang');
+  const browser = (navigator.language || 'en').slice(0, 2).toLowerCase();
+  const supported = ['en', 'es', 'de', 'fr'];
+  const lang = supported.includes(saved) ? saved : supported.includes(browser) ? browser : 'en';
+  if (lang !== 'en') setLang(lang);
+})();
+</script>
+
+</body>
+</html>
