@@ -579,8 +579,9 @@
     flex-direction: column;
     justify-content: flex-end;
     padding: 24px;
-    opacity: 1;  /* always visible on all cards */
+    opacity: 1;
     transition: opacity 0.35s;
+    pointer-events: none; /* let clicks pass through to video */
   }
   .grid-item:hover .grid-thumb { transform: scale(1.04); filter: brightness(0.55) saturate(1.1); }
   .grid-item:hover .play-ring { transform: scale(1.12); border-color: var(--gold); }
@@ -1141,10 +1142,10 @@
         <source src="videos/listing2.mp4" type="video/mp4">
       </video>
       <div class="grid-thumb-placeholder" style="z-index:0;background:linear-gradient(135deg,#0a0e18,#0d0d1a);"></div>
-      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;">
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;pointer-events:none;">
         <div class="play-ring"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
       </div>
-      <div class="grid-overlay">
+      <div class="grid-overlay" style="pointer-events:none;">
         <div class="overlay-tag">Penthouse · Luxury</div>
         <div class="overlay-title">SkyTower Penthouse<br>Chicago, IL</div>
         <div class="overlay-meta">3 Bed · $2.4M · Calacatta marble, city skyline views</div>
@@ -1161,10 +1162,10 @@
         <source src="videos/listing3.mp4" type="video/mp4">
       </video>
       <div class="grid-thumb-placeholder" style="z-index:0;background:linear-gradient(135deg,#0d1010,#0a0a0a);"></div>
-      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;">
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;pointer-events:none;">
         <div class="play-ring"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
       </div>
-      <div class="grid-overlay">
+      <div class="grid-overlay" style="pointer-events:none;">
         <div class="overlay-tag">Condo · Minimalist</div>
         <div class="overlay-title">The Nordic Flat<br>Seattle, WA</div>
         <div class="overlay-meta">2 Bed · $895K · Scandinavian minimalist, walnut &amp; charcoal</div>
@@ -1181,10 +1182,10 @@
         <source src="videos/listing4.mp4" type="video/mp4">
       </video>
       <div class="grid-thumb-placeholder" style="z-index:0;background:linear-gradient(135deg,#0e1008,#0a0a0a);"></div>
-      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;">
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;pointer-events:none;">
         <div class="play-ring"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
       </div>
-      <div class="grid-overlay">
+      <div class="grid-overlay" style="pointer-events:none;">
         <div class="overlay-tag">Family Home · Farmhouse</div>
         <div class="overlay-title">The Elm Craftsman<br>Nashville, TN</div>
         <div class="overlay-meta">4 Bed · $1.1M · White shaker, oak floors, covered porch</div>
@@ -1201,10 +1202,10 @@
         <source src="videos/listing5.mp4" type="video/mp4">
       </video>
       <div class="grid-thumb-placeholder" style="z-index:0;background:linear-gradient(135deg,#121212,#0a0a0a);"></div>
-      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;">
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;pointer-events:none;">
         <div class="play-ring"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
       </div>
-      <div class="grid-overlay">
+      <div class="grid-overlay" style="pointer-events:none;">
         <div class="overlay-tag">Studio · Contemporary</div>
         <div class="overlay-title">Urban One<br>Austin, TX</div>
         <div class="overlay-meta">Studio · $385K · Cream &amp; matte black, smart compact layout</div>
@@ -1663,6 +1664,35 @@ function showStaging(i, btn) {
     if (window.scrollY > 100) hint.style.opacity = '0';
     else hint.style.opacity = null;
   }, { passive: true });
+
+  // Grid card videos — autoplay when scrolled into view, click to play/pause
+  document.querySelectorAll('.grid-item').forEach(item => {
+    const video = item.querySelector('video');
+    if (!video) return;
+
+    // Use Intersection Observer to play when visible
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      });
+    }, { threshold: 0.3 });
+
+    observer.observe(item);
+
+    // Click to play/pause
+    item.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (video.paused) {
+        video.play().catch(() => {});
+      } else {
+        video.pause();
+      }
+    });
+  });
 </script>
 
 
